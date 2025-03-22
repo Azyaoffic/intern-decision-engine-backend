@@ -11,4 +11,10 @@ public class DecisionEngineConstants {
     public static final Integer SEGMENT_1_CREDIT_MODIFIER = 100;
     public static final Integer SEGMENT_2_CREDIT_MODIFIER = 300;
     public static final Integer SEGMENT_3_CREDIT_MODIFIER = 1000;
+
+    public static final Float LIFE_EXPECTANCY_ESTONIA = 78.1f;
+    public static final Float LIFE_EXPECTANCY_LATVIA = 74.5f;
+    public static final Float LIFE_EXPECTANCY_LITHUANIA = 75.6f;
+    public static final Float LIFE_EXPECTANCY_BALTICS_AVG = 76.0f;
+    public static final Integer UNDERAGE_LIMIT = 18;
 }

@@ -1,5 +1,7 @@
 package ee.taltech.inbankbackend.service;
 
+import com.github.vladislavgoltjajev.personalcode.exception.PersonalCodeException;
+import com.github.vladislavgoltjajev.personalcode.locale.estonia.EstonianPersonalCodeParser;
 import com.github.vladislavgoltjajev.personalcode.locale.estonia.EstonianPersonalCodeValidator;
 import ee.taltech.inbankbackend.config.DecisionEngineConstants;
 import ee.taltech.inbankbackend.exceptions.InvalidLoanAmountException;
@@ -7,6 +9,8 @@ import ee.taltech.inbankbackend.exceptions.InvalidLoanPeriodException;
 import ee.taltech.inbankbackend.exceptions.InvalidPersonalCodeException;
 import ee.taltech.inbankbackend.exceptions.NoValidLoanException;
 import org.springframework.stereotype.Service;
+
+import java.time.Period;
 
 /**
  * A service class that provides a method for calculating an approved loan amount and period for a customer.
@@ -18,6 +22,7 @@ public class DecisionEngine {
 
     // Used to check for the validity of the presented ID code.
     private final EstonianPersonalCodeValidator validator = new EstonianPersonalCodeValidator();
+    private final EstonianPersonalCodeParser parser = new EstonianPersonalCodeParser();
     private int creditModifier = 0;
 
     /**
@@ -40,6 +45,7 @@ public class DecisionEngine {
             NoValidLoanException {
         try {
             verifyInputs(personalCode, loanAmount, loanPeriod);
+            verifyAge(personalCode, loanPeriod);
         } catch (Exception e) {
             return new Decision(null, null, e.getMessage());
         }
@@ -95,6 +101,25 @@ public class DecisionEngine {
         }
 
         return DecisionEngineConstants.SEGMENT_3_CREDIT_MODIFIER;
+    }
+
+    /**
+     * Verifies that the customer is of legal age and is expected to live till the end of the loan period.
+     * If the customer is underage or is not expected to live till the end of the loan period, then throws an exception.
+     *
+     * @param personalCode Personal ID code of the customer that made the request.
+     * @param loanPeriod Requested loan period
+     * @throws PersonalCodeException If the provided personal ID code is invalid
+     * @throws NoValidLoanException If the customer is underage or is not expected to live till the end of the loan period
+     */
+    private void verifyAge(String personalCode, int loanPeriod) throws PersonalCodeException, NoValidLoanException {
+        Period age = parser.getAge(personalCode);
+        int ageMonths = age.getYears() * 12 + age.getMonths();
+
+        if (ageMonths < DecisionEngineConstants.UNDERAGE_LIMIT * 12
+                || ageMonths + loanPeriod > DecisionEngineConstants.LIFE_EXPECTANCY_BALTICS_AVG * 12) {
+            throw new NoValidLoanException("Loan was not given due to age constraints");
+        }
     }
 
     /**
