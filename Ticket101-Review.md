@@ -38,6 +38,7 @@ The goal was to validate this implementation and assess it against these require
 
 ## What Was Done Poorly
 - **Too many requests**: The client code sends request at each change of the sliders, which can lead to unnecessary requests. While this is fine for the selection of the loan amount, period selection only changes values in steps of 6, resulting in 6 identical requests being sent.
+  - This, in my opinion, was the biggest issue with the code and that was fixed in the client-side codebase.
 - **Score categories do not match examples**: All codes provided in example end up in the same category, which is not the intended solution. It is unclear whether those examples are part of requirements or not (i.e. whether the solution should be able to handle them).
 - **Wrong maximum period constant**: The maximum period constant is set to 60, while the requirements state that the maximum period is 48 months.
 - **Maximum sum**: The maximum sum is limited by what the user inputs, which might be lower than the maximum sum that can be approved. Per requirements we should return the maximum sum that can be approved, regardless of the user input.
