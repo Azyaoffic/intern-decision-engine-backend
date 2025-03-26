@@ -42,6 +42,7 @@ The goal was to validate this implementation and assess it against these require
 - **Wrong maximum period constant**: The maximum period constant is set to 60, while the requirements state that the maximum period is 48 months.
 - **Maximum sum**: The maximum sum is limited by what the user inputs, which might be lower than the maximum sum that can be approved. This makes sense but is not explicitly stated in the requirements.
 - **Iterative maximum period calculation**: The code uses iteration to calculate the maximum period instead of using a formula. While this works, this is not effective.
+  - Also, this is one of the few calculations that is not in a separate method.
 
 ## Conclusion
 The code effectively meets the core requirement of determining the maximum approvable sum with period adjustments, handling constraints, and providing a usable API. However, discrepancies in credit modifier assignment, partial scoring algorithm adherence, and a minor period limit issue suggest areas for refinement. Most issues stem from requirement ambiguities (e.g., examples vs. logic), so aligning these would solidify the implementation.
